@@ -32,65 +32,42 @@ public class GameManager : MonoBehaviour
             changeLogicArray(0);
             if(itemAnswers[0].x == itemAnswers[1].x){
                 if(checkLineX(itemAnswers[0].y, itemAnswers[1].y, itemAnswers[0].x)){
-                    //Debug.Log("dung roi");
-                    changeLogicArray(0);
-                    DestroyAnswers();
+                    successCheckLogic();
                     return;
                 }
-                // else{
-                //     //Debug.Log("sai roi");
-                //     changeLogicArray(2);
-                // }
             }
             if(itemAnswers[0].y == itemAnswers[1].y){
                 if(checkLineY(itemAnswers[0].x, itemAnswers[1].x, itemAnswers[0].y)){
-                    //Debug.Log("dung roi");
-                    changeLogicArray(0);
-                    DestroyAnswers();
+                    successCheckLogic();
                     return;
                 }
-                // else{
-                //     //Debug.Log("sai roi");
-                //     changeLogicArray(2);
-                // }
             }
             if(checkRectX(itemAnswers[0], itemAnswers[1]) != -1){
-                //Debug.Log("dung roi");
-                changeLogicArray(0);
-                DestroyAnswers();
+                successCheckLogic();
                 return;
             }
             if(checkRectY(itemAnswers[0], itemAnswers[1]) != -1){
-                //Debug.Log("dung roi");
-                changeLogicArray(0);
-                DestroyAnswers();
+                successCheckLogic();
                 return;
             }
             if(checkMoreLineX(itemAnswers[0], itemAnswers[1], 1) != -1 ){
-                Debug.Log("dung roi checkMoreLineX");
-                changeLogicArray(0);
-                DestroyAnswers();
+                successCheckLogic();
                 return;
             }
 
             if(checkMoreLineX(itemAnswers[0], itemAnswers[1], -1) != -1 ){
-                Debug.Log("dung roi checkMoreLineX");
-                changeLogicArray(0);
-                DestroyAnswers();
+                successCheckLogic();
                 return;
             }
 
             if(checkMoreLineY(itemAnswers[0], itemAnswers[1], 1)!= -1){
-                Debug.Log("dung roi checkMoreLineY");
-                changeLogicArray(0);
+                successCheckLogic();
                 DestroyAnswers();
                 return;
             }
 
             if(checkMoreLineY(itemAnswers[0], itemAnswers[1], -1)!= -1){
-                Debug.Log("dung roi checkMoreLineY");
-                changeLogicArray(0);
-                DestroyAnswers();
+                successCheckLogic();
                 return;
             }
             changeLogicArray(2);
@@ -98,6 +75,14 @@ public class GameManager : MonoBehaviour
             Debug.Log("sai roi");
         }
     }
+    //Xoa vs reset logic mang neu thanh cong
+    private void successCheckLogic(){
+        changeLogicArray(5);
+        DestroyAnswers();
+        //StartCoroutine(DecreaseRowCo());
+        StartCoroutine(IncreaseRowCo());
+    }
+
     // doi gia tri mang logic
     private void changeLogicArray(int a){
         manglogic[itemAnswers[0].x,itemAnswers[0].y] = a;
@@ -184,7 +169,7 @@ public class GameManager : MonoBehaviour
     }
 
     private int checkMoreLineX(Item p1, Item p2, int type){
-        Debug.Log("dang checkMoreLineX");
+        //Debug.Log("dang checkMoreLineX");
         // find point have y min
         Item pMinY = p1, pMaxY = p2;
         if (p1.y > p2.y) {
@@ -214,7 +199,7 @@ public class GameManager : MonoBehaviour
     }
 
     private int checkMoreLineY(Item p1, Item p2, int type) {
-        Debug.Log("dang checkMoreLineY");
+        //Debug.Log("dang checkMoreLineY");
         Item pMinX = p1, pMaxX = p2;
         if (p1.x > p2.x) {
             pMinX = p2;
@@ -227,7 +212,8 @@ public class GameManager : MonoBehaviour
             col = pMaxX.y;
         }
         if (checkLineY(pMinX.x, pMaxX.x, col)) {
-            while (manglogic[x,pMinX.y] != 2 && manglogic[x,pMaxX.x] != 2) {
+            while (manglogic[x,pMinX.y] != 2 && manglogic[x,pMaxX.y] != 2) {
+                 //while (manglogic[pMinY.x,y] != 2 && manglogic[pMaxY.x,y] != 2) {
                 if (checkLineX(pMinX.y, pMaxX.y, x)) {
                     return x;
                 }
@@ -240,7 +226,6 @@ public class GameManager : MonoBehaviour
         return -1;
     }
 
-
     private void printLogicArray(){
         string h = "";
         for(int x = 0; x < manglogic.GetLength(0); x++){
@@ -250,5 +235,51 @@ public class GameManager : MonoBehaviour
             h+="\n";
         }
         Debug.Log(h);
+    }
+
+    //lv2
+    private IEnumerator DecreaseRowCo(){
+        yield return new WaitForSeconds(.2f);
+        int nullCounter = 0;
+        for(int x=0; x < manglogic.GetLength(0); x++){
+            for(int y=0 ; y < manglogic.GetLength(1); y++){
+                if(manglogic[x,y] == 5){
+                    nullCounter++;
+                }else if( nullCounter > 0){
+                    var itemPikachu = GameObject.Find("item"+ x + "_"+ y);
+                    Item item = itemPikachu.GetComponent<Item>();
+                    float itemY = itemPikachu.transform.position.y - nullCounter; 
+                    itemPikachu.transform.position = new Vector2(x,itemY);
+                    item.UpdatePosition(x, (int)itemY);
+                    itemPikachu.name = "item"+ x + "_"+ itemY;
+                    manglogic[x,y-nullCounter] = manglogic[x,y];
+                    manglogic[x,y] = 5;
+                }
+            }
+            nullCounter = 0;
+        }
+    }
+
+    //lv3
+    private IEnumerator IncreaseRowCo(){
+        yield return new WaitForSeconds(.2f);
+        int nullCounter = 0;
+        for(int x=manglogic.GetLength(0)-1; x >=0 ; x--){
+            for(int y=manglogic.GetLength(1)-1 ; y >=0 ; y--){
+                if(manglogic[x,y] == 5){
+                    nullCounter--;
+                }else if( nullCounter < 0){
+                    var itemPikachu = GameObject.Find("item"+ x + "_"+ y);
+                    Item item = itemPikachu.GetComponent<Item>();
+                    float itemY = itemPikachu.transform.position.y - nullCounter; 
+                    itemPikachu.transform.position = new Vector2(x,itemY);
+                    item.UpdatePosition(x, (int)itemY);
+                    itemPikachu.name = "item"+ x + "_"+ itemY;
+                    manglogic[x,y-nullCounter] = manglogic[x,y];
+                    manglogic[x,y] = 5;
+                }
+            }
+            nullCounter = 0;
+        }
     }
 }

@@ -26,6 +26,8 @@ public class Item : MonoBehaviour
     private void OnMouseDown() {
         //Debug.Log("Pressed - "+name);
         if(GameManager.Instance.m_isAnswerChecking) return;
+        // check double item
+        if(GameManager.Instance.itemAnswers.Contains(this)) return;
         GameManager.Instance.itemAnswers.Add(this);
         if(GameManager.Instance.itemAnswers.Count == 2){
             //Debug.Log($"kiem tra {GameManager.Instance.itemAnswers[0].ToStringItem()} voi {GameManager.Instance.itemAnswers[1].ToStringItem()}");

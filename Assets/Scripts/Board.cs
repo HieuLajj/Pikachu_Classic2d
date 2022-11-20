@@ -64,7 +64,7 @@ public class Board : MonoBehaviour
                     item.UpdatePosition(x,y);
                     item.UpdateIcon();
                 }
-                bgTile.name = "BG Tile - "+ x + ","+ y;
+                bgTile.name = "item"+ x + "_"+ y;
             }
         }
     }
