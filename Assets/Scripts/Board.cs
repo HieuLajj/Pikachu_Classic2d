@@ -15,11 +15,22 @@ public class Board : MonoBehaviour
     public PikachuItem[] pikachuItems;
     public List<PikachuItem> pikachiItemsCopy;
     public List<PikachuItem> pikachuConlai;
-    // public List<Item> itemAnswers;
-    // private bool m_isAnswerChecking = false;
-    private int sookhongtinhbenngoai = 0;
-    void Start()
+    public int sookhongtinhbenngoai = 0;
+    private static Board instance;
+    public static Board Instance
     {
+        get{
+            if(instance == null){
+                instance = FindObjectOfType<Board>();
+            }
+            return instance;
+        }
+        private set{
+            instance = value;
+        }
+    }
+
+    public void SetupGame(){
         sookhongtinhbenngoai = (width+height)*2-4;
         GameManager.Instance.manglogic = new int[width,height];
         GenerateMatchItems();
@@ -56,25 +67,21 @@ public class Board : MonoBehaviour
                 if(x==0 || y == 0 || x == width-1 || y == height-1){
                     if((x==0 && y==0) || (x==width-1 && y==0) || (x==0 && y== height-1) || (x==width-1 && y==height-1))
                     {
-                        // SpriteRenderer spriteRenderer = bgTile.GetComponent<SpriteRenderer>();
-                        // spriteRenderer.color = Color.red;
                         GameManager.Instance.manglogic[x,y] = 2;
                     }else{
-                        // SpriteRenderer spriteRenderer = bgTile.GetComponent<SpriteRenderer>();
-                        // spriteRenderer.color = Color.blue;
                         GameManager.Instance.manglogic[x,y] = 0;
                     }
                     item.DisableRender();
                 }else{
                     GameManager.Instance.manglogic[x,y] = 2;
                     item.pikachuItem = pikachiItemsCopy[(y-1)*(width-2)+(x-1)];
-                    //item.pikachuItem = pikachiItemsCopy[0];
                     item.UpdatePosition(x,y);
                     item.UpdateIcon();
                 }
                 bgTile.name = "item"+ x + "_"+ y;
             }
         }
+        pikachiItemsCopy.Clear();
     }
 
     //xao tron mot List
@@ -89,6 +96,8 @@ public class Board : MonoBehaviour
             list[n] = value;
         }
     }
+    
+    // Danh cho UI
     public void Hoandoicacvitrikhihetduong(){
         Item[] itemall = gameObject.GetComponentsInChildren<Item>();
         foreach(Item item in itemall){
@@ -106,5 +115,16 @@ public class Board : MonoBehaviour
             }
         }
         pikachuConlai.Clear();
+    }
+
+    //reset game
+    public void ResetGame(){
+        var index = transform.childCount;
+        for(var i = index - 1 ; i>=0; i--){
+            Destroy(transform.GetChild(i).gameObject);
+        }
+        SetupGame();
+        Timer.Instance.thietlaplaithoigian();
+        GameManager.Instance.itemAnswers.Clear();
     }
 }

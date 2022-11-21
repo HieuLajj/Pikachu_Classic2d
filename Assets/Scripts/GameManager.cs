@@ -1,12 +1,17 @@
 ﻿using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+public enum Level{
+    LEVEL1,
+    LEVEL2,
+    LEVEL3
+}
 public class GameManager : MonoBehaviour
 {
     public List<Item> itemAnswers;
     public bool m_isAnswerChecking = false;
     public int[,] manglogic;
+    public Level levelCurrent = Level.LEVEL1;
     private static GameManager instance;
     public static GameManager Instance
     {
@@ -62,7 +67,7 @@ public class GameManager : MonoBehaviour
 
             if(checkMoreLineY(itemAnswers[0], itemAnswers[1], 1)!= -1){
                 successCheckLogic();
-                DestroyAnswers();
+                //DestroyAnswers();
                 return;
             }
 
@@ -72,7 +77,7 @@ public class GameManager : MonoBehaviour
             }
             changeLogicArray(2);
         }else{
-            Debug.Log("sai roi");
+            //Debug.Log("sai roi");
         }
         
         itemAnswers[0].spriteRendererMain.color = Color.white;
@@ -82,8 +87,14 @@ public class GameManager : MonoBehaviour
     private void successCheckLogic(){
         changeLogicArray(5);
         DestroyAnswers();
-        //StartCoroutine(DecreaseRowCo());
-        StartCoroutine(IncreaseRowCo());
+        if(levelCurrent == Level.LEVEL1){
+
+        }else if(levelCurrent == Level.LEVEL2){
+            StartCoroutine(DecreaseRowCo());
+        }else if(levelCurrent == Level.LEVEL3){
+            StartCoroutine(IncreaseRowCo());
+        }
+        CheckWin();
     }
 
     // doi gia tri mang logic
@@ -216,7 +227,6 @@ public class GameManager : MonoBehaviour
         }
         if (checkLineY(pMinX.x, pMaxX.x, col)) {
             while (manglogic[x,pMinX.y] != 2 && manglogic[x,pMaxX.y] != 2) {
-                 //while (manglogic[pMinY.x,y] != 2 && manglogic[pMaxY.x,y] != 2) {
                 if (checkLineX(pMinX.y, pMaxX.y, x)) {
                     return x;
                 }
@@ -284,6 +294,18 @@ public class GameManager : MonoBehaviour
             }
             nullCounter = 0;
         }
+    }
+
+    private void CheckWin(){
+        if(Board.Instance.transform.childCount-2 == Board.Instance.sookhongtinhbenngoai){
+             GameManager.Instance.Trolaimanhinhmenu();
+            // Debug.Log("Ban da chien thang");
+            // Board.Instance.ResetGame();
+        }
+    }
+
+    public void Trolaimanhinhmenu(){
+        Uimanager.Instance.menugame.SetActive(true);
     }
 
    
