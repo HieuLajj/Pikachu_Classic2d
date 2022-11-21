@@ -14,6 +14,7 @@ public class Board : MonoBehaviour
     //private int[,] manglogic;
     public PikachuItem[] pikachuItems;
     public List<PikachuItem> pikachiItemsCopy;
+    public List<PikachuItem> pikachuConlai;
     // public List<Item> itemAnswers;
     // private bool m_isAnswerChecking = false;
     private int sookhongtinhbenngoai = 0;
@@ -23,6 +24,12 @@ public class Board : MonoBehaviour
         GameManager.Instance.manglogic = new int[width,height];
         GenerateMatchItems();
         Setup();
+    }
+    private void Update() {
+        if(Input.GetKeyDown(KeyCode.B)){
+            Debug.Log("dang hoan doi lai vi tri");
+            Hoandoicacvitrikhihetduong();
+        }
     }
     private void GenerateMatchItems(){
         int halftotal = (width * height - sookhongtinhbenngoai)/2;
@@ -49,14 +56,15 @@ public class Board : MonoBehaviour
                 if(x==0 || y == 0 || x == width-1 || y == height-1){
                     if((x==0 && y==0) || (x==width-1 && y==0) || (x==0 && y== height-1) || (x==width-1 && y==height-1))
                     {
-                        SpriteRenderer spriteRenderer = bgTile.GetComponent<SpriteRenderer>();
-                        spriteRenderer.color = Color.red;
+                        // SpriteRenderer spriteRenderer = bgTile.GetComponent<SpriteRenderer>();
+                        // spriteRenderer.color = Color.red;
                         GameManager.Instance.manglogic[x,y] = 2;
                     }else{
-                        SpriteRenderer spriteRenderer = bgTile.GetComponent<SpriteRenderer>();
-                        spriteRenderer.color = Color.blue;
+                        // SpriteRenderer spriteRenderer = bgTile.GetComponent<SpriteRenderer>();
+                        // spriteRenderer.color = Color.blue;
                         GameManager.Instance.manglogic[x,y] = 0;
                     }
+                    item.DisableRender();
                 }else{
                     GameManager.Instance.manglogic[x,y] = 2;
                     item.pikachuItem = pikachiItemsCopy[(y-1)*(width-2)+(x-1)];
@@ -80,5 +88,23 @@ public class Board : MonoBehaviour
             list[k] = list[n];
             list[n] = value;
         }
+    }
+    public void Hoandoicacvitrikhihetduong(){
+        Item[] itemall = gameObject.GetComponentsInChildren<Item>();
+        foreach(Item item in itemall){
+            if(item?.pikachuItem.icon != null){
+                pikachuConlai.Add(item.pikachuItem);
+            }
+        }
+        int indexItem = 0;
+        Shuffle(pikachuConlai);
+        foreach(Item item in itemall){
+            if(item?.pikachuItem.icon != null){
+                item.pikachuItem = pikachuConlai[indexItem];
+                indexItem++;
+                item.UpdateIcon();
+            }
+        }
+        pikachuConlai.Clear();
     }
 }

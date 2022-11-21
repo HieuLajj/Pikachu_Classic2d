@@ -74,6 +74,9 @@ public class GameManager : MonoBehaviour
         }else{
             Debug.Log("sai roi");
         }
+        
+        itemAnswers[0].spriteRendererMain.color = Color.white;
+        itemAnswers[1].spriteRendererMain.color = Color.white;
     }
     //Xoa vs reset logic mang neu thanh cong
     private void successCheckLogic(){
@@ -282,4 +285,6 @@ public class GameManager : MonoBehaviour
             nullCounter = 0;
         }
     }
+
+   
 }
