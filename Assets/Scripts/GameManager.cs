@@ -299,12 +299,19 @@ public class GameManager : MonoBehaviour
     private void CheckWin(){
         if(Board.Instance.transform.childCount-2 == Board.Instance.sookhongtinhbenngoai){
              GameManager.Instance.Trolaimanhinhmenu();
+             Uimanager.Instance.ThongBaoText.text = "CHIEN THANG";
             // Debug.Log("Ban da chien thang");
             // Board.Instance.ResetGame();
         }
     }
 
     public void Trolaimanhinhmenu(){
+        StartCoroutine(Doithonbao());
+    }
+    private IEnumerator Doithonbao(){
+        Uimanager.Instance.ThongBaoText.gameObject.SetActive(true);
+        yield return new WaitForSeconds(3);
+        Uimanager.Instance.ThongBaoText.gameObject.SetActive(false);
         Uimanager.Instance.menugame.SetActive(true);
     }
 

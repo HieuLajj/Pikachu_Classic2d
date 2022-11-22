@@ -34,6 +34,7 @@ public class Timer : MonoBehaviour
     {
         if( gameTime <= 0.5f && stopTimer == false){
             stopTimer = true;
+            Uimanager.Instance.ThongBaoText.text = "THAT BAI";
             GameManager.Instance.Trolaimanhinhmenu();
         }
 
