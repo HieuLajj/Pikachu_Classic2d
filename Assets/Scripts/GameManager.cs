@@ -310,7 +310,8 @@ public class GameManager : MonoBehaviour
     }
     private IEnumerator Doithonbao(){
         Uimanager.Instance.ThongBaoText.gameObject.SetActive(true);
-        yield return new WaitForSeconds(3);
+        yield return new WaitForSeconds(1);
+         Uimanager.Instance.ThongBaoText.text = "";
         Uimanager.Instance.ThongBaoText.gameObject.SetActive(false);
         Uimanager.Instance.menugame.SetActive(true);
     }
